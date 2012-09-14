@@ -83,7 +83,7 @@ class ClassMetadata implements ClassMetadataInterface
      */
     public function hasClassMetadata($index)
     {
-        return isset($this->classMetadata[$index]);        
+        return isset($this->classMetadata[$index]);
     }
 
     /**
@@ -98,6 +98,16 @@ class ClassMetadata implements ClassMetadataInterface
         }
 
         return false;
+    }
+
+    /**
+     * Return all class metadata.
+     * 
+     * @return array 
+     */
+    public function getAllClassMetadata()
+    {
+        return $this->classMetadata;
     }
 
     /**
@@ -150,6 +160,16 @@ class ClassMetadata implements ClassMetadataInterface
     }
 
     /**
+     * Return all properties metadata.
+     * 
+     * @return array 
+     */
+    public function getAllPropertyMetadata()
+    {
+        return $this->propertyMetadata;
+    }
+
+    /**
      * Add new value under $index for $method. If value already exists 
      * it will be overwritten. 
      * 
@@ -196,5 +216,15 @@ class ClassMetadata implements ClassMetadataInterface
         }
 
         return false;
+    }
+
+    /**
+     * Return all method metadata.
+     * 
+     * @return array 
+     */
+    public function getAllMethodMetadata()
+    {
+        return $this->methodMetadata;
     }
 }
