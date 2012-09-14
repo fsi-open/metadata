@@ -1,0 +1,24 @@
+{
+    "repositories": [ { "type": "composer", "url": "http://git.fsi.pl/" } ],
+    "name": "fsi/metadata",
+    "type": "library",
+    "description": "FSi Metadata Component",
+    "keywords": ["fsi", "component", "metadata"],
+    "authors": [
+        {
+            "name": "Norbert Orzechowicz",
+            "email": "norbert@fsi.pl"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "fsi/cache" : "0.9.*",
+        "fsi/reflection" : "0.9.*",
+        "doctrine/common": ">=2.2.3,<2.4-dev"
+    },
+    "autoload": {
+        "psr-0": {
+            "FSi\\Component\\Metadata": "lib/"
+        }
+    }
+}
