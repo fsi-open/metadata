@@ -1,15 +1,10 @@
 # FSi Metadata Component Documentation
 
-~~~
-
 FSi Metadata Component is a library that provide some commonly used mechanisms to read 
 configurations for classes from annotations.  
 
-~~~
-
 ## Usage {#usage}
 
-~~~
 
 FSi Metadata Component provides ClassMetadata object that can be easly overwritten. Default ClassMetadata object allows 
 you to strore inside of it configuration for class, properties and methods. 
@@ -19,7 +14,6 @@ What you need to do is to create class that extends from one of abstract drivers
 
 Example of reading annotations from php class files. 
 
-~~~
 
 **Annotation driver** 
 
@@ -73,12 +67,8 @@ Example of reading annotations from php class files.
         $metdata = $factory->getClassMetadata('FSi\Bundle\SiteBundle\Entity\MetaTest');
     }
 
-~~~
-
 Sometimes default ClassMetadata is not enough. You can create own class that implements 
 ClassMetadataInterface and pass class name into MetadataFactory constructor as third parameter. 
-
-~~~
 
 **Factory constructor example**
 
