@@ -73,3 +73,8 @@ ClassMetadataInterface and pass class name into MetadataFactory constructor as t
 **Factory constructor example**
 
     $factory = new MetadataFactory($driver, $cache, 'FSi\SiteBundle\Metadata\MyClassMetadata');
+
+If you want to use Metadata Component in two separate mechanisms, inside of the 
+same application you should create new MetatadaFactory and MetadataDriver in each 
+mechanism but cache driver may be the same object each time. It is possible because 
+cache mechanism is used with different namespace for each factory object.  

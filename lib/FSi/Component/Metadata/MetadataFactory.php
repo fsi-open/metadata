@@ -58,13 +58,13 @@ class MetadataFactory
     {
         $class = ltrim($class, '\\');
         $metadataIndex = $class . $this->metadataClassName;
-        
+        $cacheNamespace = spl_object_hash($this);
 
         if (isset($this->loadedMetadata[$metadataIndex])) {
             return $this->loadedMetadata[$metadataIndex];
         }
 
-        if (false !== ($this->loadedMetadata[$metadataIndex] = $this->cache->getItem($metadataIndex))) {
+        if (false !== ($this->loadedMetadata[$metadataIndex] = $this->cache->getItem($metadataIndex, $cacheNamespace))) {
             return $this->loadedMetadata[$metadataIndex];
         }
 
@@ -77,7 +77,7 @@ class MetadataFactory
 
         $this->driver->loadClassMetadata($metadata);
 
-        $this->cache->setItem($metadataIndex, $metadata);
+        $this->cache->setItem($metadataIndex, $metadata, 0, $cacheNamespace);
 
         return $metadata;
     }

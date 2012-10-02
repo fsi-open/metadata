@@ -22,7 +22,10 @@ class MetadataFactoryTest extends \PHPUnit_Framework_TestCase
     public function testLoadClassMetadata()
     {
         $cache   = $this->getMock('FSi\Component\Cache\CacheInterface', 
-                array('getItem', 'setItem', 'hasItem', 'removeItem', 'addItem', 'clear', 'clearNamespace'));
+                array('getItem', 'setItem', 'hasItem', 'removeItem', 'addItem', 
+                	'clear', 'clearNamespace', 'setNamespace', 'getNamespace'
+                )
+            );
         $cache->expects($this->at(0))
                 ->method('getItem')
                 ->will($this->returnValue(false));
@@ -41,7 +44,10 @@ class MetadataFactoryTest extends \PHPUnit_Framework_TestCase
     public function testLoadParentMetadata()
     {
         $cache   = $this->getMock('FSi\Component\Cache\CacheInterface', 
-                array('getItem', 'setItem', 'hasItem', 'removeItem', 'addItem', 'clear', 'clearNamespace'));
+                array('getItem', 'setItem', 'hasItem', 'removeItem', 'addItem', 
+                	'clear', 'clearNamespace', 'setNamespace', 'getNamespace'
+                )
+            );
         $cache->expects($this->any())
                 ->method('getItem')
                 ->will($this->returnValue(false));
