@@ -1,9 +1,8 @@
 {
-    "repositories": [ { "type": "composer", "url": "http://git.fsi.pl/" } ],
     "name": "fsi/metadata",
     "type": "library",
-    "description": "FSi Metadata Component",
-    "keywords": ["fsi", "component", "metadata"],
+    "description": "FSi Metadata Component is a library that provide some commonly used mechanisms to read configurations for classes from annotations.",
+    "keywords": ["fsi", "component", "metadata", "annotation"],
     "authors": [
         {
             "name": "Norbert Orzechowicz",
@@ -11,7 +10,7 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0",
+        "php": ">=5.3.2",
         "fsi/cache" : "0.9.*",
         "fsi/reflection" : "0.9.*",
         "doctrine/common": ">=2.2.3,<2.4-dev"
