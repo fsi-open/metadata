@@ -20,16 +20,22 @@ class MetadataFactory
 
     /**
      * Driver used to read metadata.
-     * 
+     *
      * @var DriverInterface
      */
-    protected $driver; 
+    protected $driver;
 
     /**
      * @var CacheInterface
      */
-    protected $cache; 
+    protected $cache;
 
+    /**
+     * Namespace used in cache.
+     *
+     * @var string
+     */
+    protected $cacheNamespace;
     /**
      * Name of class used to store metada
      * @var string
@@ -37,20 +43,29 @@ class MetadataFactory
     protected $metadataClassName;
 
     protected $loadedMetadata = array();
-    
+
     /**
-     * Create metadatafactory. 
-     * Sometimes it might be usefull to create own ClassMetadata, this  
-     * 
+     * Create metadatafactory.
+     * Sometimes it might be usefull to create own ClassMetadata, this
+     *
      * @param DriverInterface $driver
      * @param CacheInterface $cache
+     * @param string $cacheNamespace
      * @param string $metadataClassName
      */
-    public function __construct(DriverInterface $driver, CacheInterface $cache,
-        $metadataClassName = null)
+    public function __construct(DriverInterface $driver, $cache = null,
+        $cacheNamespace = null, $metadataClassName = null)
     {
         $this->driver = $driver;
-        $this->cache  = $cache;
+        if (isset($cache)) {
+            if (!$cache instanceof CacheInterface) {
+                throw new \InvalidArgumentException('Cache must implements FSi\Component\Cache\CacheInterface');
+            }
+            $this->cache  = $cache;
+            if (isset($cacheNamespace)) {
+                $this->cacheNamespace = $cacheNamespace;
+            }
+        }
         $this->metadataClassName = isset($metadataClassName) ? ltrim($metadataClassName, '\\') : self::METADATA_CLASS;
     }
 
@@ -58,14 +73,15 @@ class MetadataFactory
     {
         $class = ltrim($class, '\\');
         $metadataIndex = $class . $this->metadataClassName;
-        $cacheNamespace = spl_object_hash($this);
 
         if (isset($this->loadedMetadata[$metadataIndex])) {
             return $this->loadedMetadata[$metadataIndex];
         }
 
-        if (false !== ($this->loadedMetadata[$metadataIndex] = $this->cache->getItem($metadataIndex, $cacheNamespace))) {
-            return $this->loadedMetadata[$metadataIndex];
+        if (isset($this->cache)) {
+            if (false !== ($this->loadedMetadata[$metadataIndex] = $this->cache->getItem($metadataIndex, $this->cacheNamespace))) {
+                return $this->loadedMetadata[$metadataIndex];
+            }
         }
 
         $metadata = new $this->metadataClassName($class);
@@ -77,7 +93,9 @@ class MetadataFactory
 
         $this->driver->loadClassMetadata($metadata);
 
-        $this->cache->setItem($metadataIndex, $metadata, 0, $cacheNamespace);
+        if (isset($this->cache)) {
+            $this->cache->setItem($metadataIndex, $metadata, 0, $this->cacheNamespace);
+        }
 
         return $metadata;
     }

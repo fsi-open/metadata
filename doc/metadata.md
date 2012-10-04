@@ -72,13 +72,32 @@ Example of reading annotations from php class files.
 
     public function metadataAction()
     {
-        $cache  = new ArrayCache();//ApcCache();
-
         $driver = new DriverChain(array(
             new \FSi\Bundle\SiteBundle\Metadata\Driver\AnnotationDriver($this->get('annotation_reader'))
         ));
         
-        $factory = new MetadataFactory($driver, $cache);
+        $factory = new MetadataFactory($driver);
+        
+        $metdata = $factory->getClassMetadata('FSi\Bundle\SiteBundle\Entity\MetaTest');
+    }
+    
+**Example action in symfony 2 controller (with cache)**
+
+All you need to do to implement caching metadata is create the cache object from ``FSi\Component\Cache`` and pass it
+into metadata factory constructor. 
+For development purposes we suggest to use ArrayCache instead of not using any cache. 
+
+
+    public function metadataAction()
+    {
+        $cache = new FSi\Component\Cache\ApcCache(); 
+        
+        $driver = new DriverChain(array(
+            new \FSi\Bundle\SiteBundle\Metadata\Driver\AnnotationDriver($this->get('annotation_reader'))
+        ));
+        
+        // the third parameter should be used when one cache instance will be used in many metadata factories. 
+        $factory = new MetadataFactory($driver, $cache, 'cache-namespace');
         
         $metdata = $factory->getClassMetadata('FSi\Bundle\SiteBundle\Entity\MetaTest');
     }
@@ -86,9 +105,9 @@ Example of reading annotations from php class files.
 Sometimes default ClassMetadata is not enough. You can create own class that implements 
 ClassMetadataInterface and pass class name into MetadataFactory constructor as third parameter. 
 
-**Factory constructor example**
+**Factory constructor example with custom metadata class**
 
-    $factory = new MetadataFactory($driver, $cache, 'FSi\SiteBundle\Metadata\MyClassMetadata');
+    $factory = new MetadataFactory($driver, $cache, 'cache-namespace', 'FSi\SiteBundle\Metadata\MyClassMetadata');
 
 If you want to use Metadata Component in two separate mechanisms, inside of the 
 same application you should create new MetatadaFactory and MetadataDriver in each 

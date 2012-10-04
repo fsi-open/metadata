@@ -11,9 +11,14 @@
     ],
     "require": {
         "php": ">=5.3.2",
-        "fsi/cache" : "0.9.*",
         "fsi/reflection" : "0.9.*",
         "doctrine/common": ">=2.2.3,<2.4-dev"
+    },
+    "require-dev": {
+        "fsi/cache" : "0.9.*"
+    },
+    "suggest": {
+        "fsi/cache" : "Allows FSi Metadata Component to cache metadata in selected storage instead of reading them from files each time."
     },
     "autoload": {
         "psr-0": {

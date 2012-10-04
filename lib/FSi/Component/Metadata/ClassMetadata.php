@@ -17,28 +17,28 @@ class ClassMetadata implements ClassMetadataInterface
 {
     /**
      * Name of the class for which the data is stored
-     * 
+     *
      * @var string
      */
     protected $class;
-    
+
     /**
-     * Class metadata 
-     * 
+     * Class metadata
+     *
      * @var array
      */
     protected $classMetadata = array();
-    
+
     /**
-     * Metadata for properties 
-     * 
+     * Metadata for properties
+     *
      * @var array
      */
     protected $propertyMetadata = array();
-    
+
     /**
      * Methods metadata
-     * 
+     *
      * @var array
      */
     protected $methodMetadata = array();
@@ -65,8 +65,8 @@ class ClassMetadata implements ClassMetadataInterface
     }
 
     /**
-     * Add value for class metadata under $index 
-     * 
+     * Add value for class metadata under $index
+     *
      * @param string $index
      * @param mixed $value
      */
@@ -78,7 +78,7 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Check if metadata exists.
-     * 
+     *
      * @param string $index
      */
     public function hasClassMetadata($index)
@@ -88,7 +88,7 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Get class metadata.
-     * 
+     *
      * @param string $index
      */
     public function getClassMetadata($index)
@@ -102,8 +102,8 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Return all class metadata.
-     * 
-     * @return array 
+     *
+     * @return array
      */
     public function getAllClassMetadata()
     {
@@ -111,9 +111,9 @@ class ClassMetadata implements ClassMetadataInterface
     }
 
     /**
-     * Add new value under $index for $property. If value already exists 
-     * it will be overwritten. 
-     * 
+     * Add new value under $index for $property. If value already exists
+     * it will be overwritten.
+     *
      * @param string $property
      * @param string $index
      * @param mixed $value
@@ -132,7 +132,7 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Check if there is a value under $index for $property
-     * 
+     *
      * @param string $property
      * @param string $index
      * @return boolean
@@ -144,10 +144,10 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Returns value from $index for $property
-     * 
+     *
      * @param string $property
      * @param string $index
-     * 
+     *
      * @return boolean - return value or fase if there is nothing under $index for $property
      */
     public function getPropertyMetadata($property, $index)
@@ -161,8 +161,8 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Return all properties metadata.
-     * 
-     * @return array 
+     *
+     * @return array
      */
     public function getAllPropertyMetadata()
     {
@@ -170,9 +170,9 @@ class ClassMetadata implements ClassMetadataInterface
     }
 
     /**
-     * Add new value under $index for $method. If value already exists 
-     * it will be overwritten. 
-     * 
+     * Add new value under $index for $method. If value already exists
+     * it will be overwritten.
+     *
      * @param string $method
      * @param string $index
      * @param mixed $value
@@ -191,7 +191,7 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Check if there is a value under $index for $property
-     * 
+     *
      * @param string $method
      * @param string $index
      * @return boolean
@@ -203,10 +203,10 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Returns value from $index for $method
-     * 
+     *
      * @param string $method
      * @param string $index
-     * 
+     *
      * @return boolean - return value or fase if there is nothing under $index for $property
      */
     public function getMethodMetadata($method, $index)
@@ -220,8 +220,8 @@ class ClassMetadata implements ClassMetadataInterface
 
     /**
      * Return all method metadata.
-     * 
-     * @return array 
+     *
+     * @return array
      */
     public function getAllMethodMetadata()
     {
