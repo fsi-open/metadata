@@ -1,7 +1,7 @@
 # FSi Metadata Component Documentation
 
-FSi Metadata Component is a library that provide some commonly used mechanisms to read 
-configurations for classes from annotations.  
+FSi Metadata Component is a library that provide some commonly used mechanisms to 
+read configurations for classes from different sources like annotations, yaml or xml.
 At the moment only php files annotations are supported.
 
 ## Setup and autoloading ##
