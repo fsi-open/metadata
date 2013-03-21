@@ -19,6 +19,12 @@ class MetadataFactoryTest extends \PHPUnit_Framework_TestCase
     const ENTITYCLASS = 'FSi\Component\Metadata\Tests\Fixtures\Entity';
     const ENTITYCHILDCLASS = 'FSi\Component\Metadata\Tests\Fixtures\ChildEntity';
 
+    public function testInvalidMetadataClass()
+    {
+        $this->setExpectedException('InvalidArgumentException');
+        $factory = new MetadataFactory(new TestDriver(), null, null, 'FSi\Component\Metadata\Tests\TestDriver');
+    }
+
     public function testLoadClassMetadata()
     {
         if (!class_exists('FSi\Component\Cache\AbstractCache')) {

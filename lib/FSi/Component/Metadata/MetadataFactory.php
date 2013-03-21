@@ -48,6 +48,7 @@ class MetadataFactory
      * Create metadatafactory.
      * Sometimes it might be usefull to create own ClassMetadata, this
      *
+     * @throws InvalidArgumentException
      * @param DriverInterface $driver
      * @param CacheInterface $cache
      * @param string $cacheNamespace
@@ -66,7 +67,16 @@ class MetadataFactory
                 $this->cacheNamespace = $cacheNamespace;
             }
         }
-        $this->metadataClassName = isset($metadataClassName) ? ltrim($metadataClassName, '\\') : self::METADATA_CLASS;
+        if (isset($metadataClassName)) {
+            $metadataClassName = ltrim($metadataClassName, '\\');
+            $metadataClassReflection = new \ReflectionClass($metadataClassName);
+            if (!$metadataClassReflection->implementsInterface('FSi\Component\Metadata\ClassMetadataInterface')) {
+                throw new \InvalidArgumentException('Metadata class must implement FSi\Component\Metadata\ClassMetadataInterface');
+            }
+            $this->metadataClassName = $metadataClassName;
+        } else {
+            $this->metadataClassName = self::METADATA_CLASS;
+        }
     }
 
     public function getClassMetadata($class)
