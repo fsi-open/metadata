@@ -8,11 +8,11 @@
          processIsolation="false"
          stopOnFailure="false"
          syntaxCheck="false"
-         bootstrap="./bootstrap.php"
+         bootstrap="tests/bootstrap.php"
 >
     <testsuites>
         <testsuite name="FSi Component Metadata">
-            <directory>./FSi/Component/Metadata/Tests/</directory>
+            <directory>tests/FSi/Component/Metadata/Tests/</directory>
         </testsuite>
     </testsuites>
 </phpunit>
