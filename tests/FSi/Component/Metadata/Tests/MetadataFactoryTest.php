@@ -26,17 +26,13 @@ class MetadataFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadClassMetadata()
     {
-        if (!class_exists('FSi\Component\Cache\AbstractCache')) {
-            $this->markTestSkipped('The FSi\Component\Metadata requires FSi\Component\Cache\CacheInterface to run testLoadClassMetadata test ');
-        }
-
-        $cache   = $this->getMock('FSi\Component\Cache\CacheInterface');
+        $cache   = $this->getMock('Doctrine\Common\Cache\Cache');
         $cache->expects($this->at(0))
-                ->method('getItem')
+                ->method('fetch')
                 ->will($this->returnValue(false));
 
         $cache->expects($this->at(1))
-                ->method('setItem')
+                ->method('save')
                 ->will($this->returnValue(false));
 
         $factory = new MetadataFactory(new TestDriver(), $cache);
@@ -48,13 +44,9 @@ class MetadataFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadParentMetadata()
     {
-        if (!class_exists('FSi\Component\Cache\AbstractCache')) {
-            $this->markTestSkipped('The FSi\Component\Metadata requires FSi\Component\Cache\CacheInterface to run testLoadParentMetadata test ');
-        }
-
-        $cache   = $this->getMock('FSi\Component\Cache\CacheInterface');
+        $cache   = $this->getMock('Doctrine\Common\Cache\Cache');
         $cache->expects($this->any())
-                ->method('getItem')
+                ->method('fetch')
                 ->will($this->returnValue(false));
 
         $factory = new MetadataFactory(new TestDriver(), $cache);
@@ -73,33 +65,31 @@ class MetadataFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($metadata->getPropertyMetadata('property0', 'test0'), 'test0');
     }
 
-    public function testLoadClassMetadataWithCacheNamespace()
+    public function testLoadClassMetadataWithCachePrefix()
     {
-        if (!class_exists('FSi\Component\Cache\AbstractCache')) {
-            $this->markTestSkipped('The FSi\Component\Metadata requires FSi\Component\Cache\CacheInterface to run testLoadClassMetadataWithCacheNamespace test ');
-        }
-
-        $cache = $this->getMock('FSi\Component\Cache\CacheInterface');
+        $cache = $this->getMock('Doctrine\Common\Cache\Cache');
         $cache->expects($this->any())
-                ->method('getItem')
+                ->method('fetch')
                 ->will($this->returnValue(false));
 
         $cache->expects($this->at(2))
-                ->method('setItem')
+                ->method('save')
                 ->with(
-                    $this->stringContains(self::ENTITYCLASS),
+                    $this->logicalAnd(
+                        $this->stringContains('cache1'),
+                        $this->stringContains(self::ENTITYCLASS)),
                     $this->isInstanceOf('FSi\Component\Metadata\ClassMetadata'),
-                    0,
-                    'cache1'
+                    0
                 );
 
         $cache->expects($this->at(6))
-                ->method('setItem')
+                ->method('save')
                 ->with(
-                    $this->stringContains(self::ENTITYCLASS),
+                    $this->logicalAnd(
+                        $this->stringContains('cache2'),
+                        $this->stringContains(self::ENTITYCLASS)),
                     $this->isInstanceOf('FSi\Component\Metadata\ClassMetadata'),
-                    0,
-                    'cache2'
+                    0
                 );
 
         $factory1 = new MetadataFactory(new TestDriver(), $cache, 'cache1');

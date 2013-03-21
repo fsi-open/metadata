@@ -9,7 +9,7 @@
 
 namespace FSi\Component\Metadata;
 
-use FSi\Component\Cache\CacheInterface;
+use Doctrine\Common\Cache\Cache;
 use FSi\Component\Metadata\Driver\DriverInterface;
 
 class MetadataFactory
@@ -19,50 +19,53 @@ class MetadataFactory
     /**
      * Driver used to read metadata.
      *
-     * @var DriverInterface
+     * @var \FSi\Component\Metadata\Driver\DriverInterface
      */
     protected $driver;
 
     /**
-     * @var CacheInterface
+     * @var \Doctrine\Common\Cache\Cache
      */
     protected $cache;
 
     /**
-     * Namespace used in cache.
+     * Prefix used in for each value stored in cache.
      *
      * @var string
      */
-    protected $cacheNamespace;
+    protected $cachePrefix;
+
     /**
      * Name of class used to store metada
+     *
      * @var string
      */
     protected $metadataClassName;
 
+    /**
+     * Array of already loaded class metadata
+     *
+     * @var array
+     */
     protected $loadedMetadata = array();
 
     /**
-     * Create metadatafactory.
-     * Sometimes it might be usefull to create own ClassMetadata, this
+     * Create metadataFactory. Sometimes it might be usefull to create own ClassMetadata.
      *
      * @throws InvalidArgumentException
      * @param DriverInterface $driver
-     * @param CacheInterface $cache
-     * @param string $cacheNamespace
+     * @param Cache $cache
+     * @param string $cachePrefix
      * @param string $metadataClassName
      */
-    public function __construct(DriverInterface $driver, $cache = null,
-        $cacheNamespace = null, $metadataClassName = null)
+    public function __construct(DriverInterface $driver, Cache $cache = null,
+        $cachePrefix = null, $metadataClassName = null)
     {
         $this->driver = $driver;
         if (isset($cache)) {
-            if (!$cache instanceof CacheInterface) {
-                throw new \InvalidArgumentException('Cache must implements FSi\Component\Cache\CacheInterface');
-            }
             $this->cache  = $cache;
-            if (isset($cacheNamespace)) {
-                $this->cacheNamespace = $cacheNamespace;
+            if (isset($cachePrefix)) {
+                $this->cachePrefix = $cachePrefix;
             }
         }
         if (isset($metadataClassName)) {
@@ -80,15 +83,16 @@ class MetadataFactory
     public function getClassMetadata($class)
     {
         $class = ltrim($class, '\\');
-        $metadataIndex = $class . $this->metadataClassName;
+        $metadataIndex = $this->getCacheId($class);
 
         if (isset($this->loadedMetadata[$metadataIndex])) {
             return $this->loadedMetadata[$metadataIndex];
         }
 
         if (isset($this->cache)) {
-            if (false !== ($this->loadedMetadata[$metadataIndex] = $this->cache->getItem($metadataIndex, $this->cacheNamespace))) {
-                return $this->loadedMetadata[$metadataIndex];
+            if (false !== ($metadata = $this->cache->fetch($metadataIndex))) {
+                $this->loadedMetadata[$metadataIndex] = $metadata;
+                return $metadata;
             }
         }
 
@@ -102,9 +106,14 @@ class MetadataFactory
         $this->driver->loadClassMetadata($metadata);
 
         if (isset($this->cache)) {
-            $this->cache->setItem($metadataIndex, $metadata, 0, $this->cacheNamespace);
+            $this->cache->save($metadataIndex, $metadata);
         }
 
         return $metadata;
+    }
+
+    protected function getCacheId($class)
+    {
+        return $this->cachePrefix . $this->metadataClassName . $class;
     }
 }
