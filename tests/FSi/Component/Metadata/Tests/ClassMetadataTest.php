@@ -1,8 +1,7 @@
 <?php
-/*
- * This file is part of the FSi Component package.
- *
- * (c) Norbert Orzechowicz <norbert@fsi.pl>
+
+/**
+ * (c) Fabryka Stron Internetowych sp. z o.o <info@fsi.pl>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,7 +14,7 @@ use FSi\Component\Metadata\ClassMetadata;
 class ClassMetadataTest extends \PHPUnit_Framework_TestCase
 {
     const ENTITYCLASS = 'FSi\Component\Metadata\Tests\Fixtures\Entity';
-    
+
     protected $metadata;
 
     protected function setUp()
@@ -31,11 +30,11 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
     public function testClassMetadata()
     {
         $this->metadata->addClassMetadata('test', 'testvalue');
-        
+
         $this->assertTrue($this->metadata->hasClassMetadata('test'));
-        
+
         $this->assertFalse($this->metadata->hasClassMetadata('testa'));
-        
+
         $this->assertEquals($this->metadata->getClassMetadata('test'), 'testvalue');
 
         $this->assertFalse($this->metadata->getClassMetadata('testaa'));
@@ -48,7 +47,7 @@ class ClassMetadataTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($classMetadata, $expectsClassMetadata);
     }
-    
+
     public function testPropertyMetadata()
     {
 
