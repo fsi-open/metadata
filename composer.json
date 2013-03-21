@@ -8,12 +8,16 @@
         {
             "name": "Norbert Orzechowicz",
             "email": "norbert@fsi.pl"
+        },
+        {
+            "name": "Lukasz Cybula",
+            "email": "lukasz@fsi.pl"
         }
     ],
     "require": {
         "php": ">=5.3.2",
         "fsi/reflection" : "0.9.*",
-        "doctrine/annotations": "1.*"
+        "doctrine/common": "~2.2"
     },
     "require-dev": {
         "fsi/cache" : "0.9.*"
