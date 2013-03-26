@@ -80,6 +80,12 @@ class MetadataFactory
         }
     }
 
+    /**
+     * Returns class metadata read by the driver. This method calls itself recursively for each ancestor class
+     *
+     * @param string $class
+     * @return \FSi\Component\Metadata\ClassMetadataInterface
+     */
     public function getClassMetadata($class)
     {
         $class = ltrim($class, '\\');
@@ -112,6 +118,11 @@ class MetadataFactory
         return $metadata;
     }
 
+    /**
+     * Returns identifier used to store class metadata in cache
+     *
+     * @param string $class
+     */
     protected function getCacheId($class)
     {
         return $this->cachePrefix . $this->metadataClassName . $class;

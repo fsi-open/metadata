@@ -14,24 +14,37 @@ use FSi\Component\Metadata\ClassMetadataInterface;
 
 class DriverChain implements DriverInterface
 {
-    protected $drivers;
+    /**
+     * Array of nested metadata drivers to iterate over. It's indexed by class namespaces.
+     *
+     * @var array
+     */
+    protected $drivers = array();
 
     /**
-     * Accepts a list of DriverInterface instances
+     * Accepts an array of DriverInterface instances indexed by class namespace
      *
-     * @param array $drivers An array of LoaderInterface instances
-     *
-     * @throws InvalidArgumentException If any of the drivers does not implement DriverInterface
+     * @param \FSi\Component\Metadata\Driver\DriverInterface[] $drivers
      */
-    public function __construct(array $drivers)
+    public function __construct(array $drivers = array())
     {
-        foreach ($drivers as $driver) {
-            if (!$driver instanceof DriverInterface) {
-                throw new \InvalidArgumentException(sprintf('Class %s is expected to implement DriverInterface', get_class($driver)));
-            }
+        foreach ($drivers as $namespace => $driver) {
+            $this->addDriver($driver, $namespace);
         }
+    }
 
-        $this->drivers = $drivers;
+    /**
+     * Add new driver to the chain
+     *
+     * @param \FSi\Component\Metadata\Driver\DriverInterface $driver
+     * @param string $namespace
+     * @return \FSi\Component\Metadata\Driver\DriverChain
+     */
+    public function addDriver(DriverInterface $driver, $namespace) {
+        if (!isset($this->drivers[$namespace]))
+            $this->drivers[$namespace] = array();
+        $this->drivers[$namespace][] = $driver;
+        return $this;
     }
 
     /**
@@ -39,8 +52,12 @@ class DriverChain implements DriverInterface
      */
     public function loadClassMetadata(ClassMetadataInterface $metadata)
     {
-        foreach ($this->drivers as $driver) {
-            $driver->loadClassMetadata($metadata);
+        $className = $metadata->getClassName();
+        foreach ($this->drivers as $namespace => $drivers) {
+            if (strpos($className, $namespace) === 0) {
+                foreach ($drivers as $driver)
+                    $driver->loadClassMetadata($metadata);
+            }
         }
     }
 }

@@ -9,17 +9,8 @@
 
 namespace FSi\Component\Metadata;
 
-use FSi\Component\Reflection\ReflectionClass;
-
-class ClassMetadata implements ClassMetadataInterface
+class ClassMetadata extends AbstractClassMetadata
 {
-    /**
-     * Name of the class for which the data is stored
-     *
-     * @var string
-     */
-    protected $class;
-
     /**
      * Class metadata
      *
@@ -40,27 +31,6 @@ class ClassMetadata implements ClassMetadataInterface
      * @var array
      */
     protected $methodMetadata = array();
-
-    public function __construct($class)
-    {
-        $this->class = $class;
-    }
-
-    public function setClassName($name)
-    {
-        $this->class = $name;
-        return $this;
-    }
-
-    public function getClassName()
-    {
-        return $this->class;
-    }
-
-    public function getClassReflection()
-    {
-        return ReflectionClass::factory($this->getClassName());
-    }
 
     /**
      * Add value for class metadata under $index

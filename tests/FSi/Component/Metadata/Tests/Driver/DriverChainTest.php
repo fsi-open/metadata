@@ -19,17 +19,17 @@ class DriverChainTest extends \PHPUnit_Framework_TestCase
 
     public function testDriverChain()
     {
-        $driver = new DriverChain(array(
-            new TestDriverFirst(),
-            new TestDriverSecond()
-        ));
+        $driver = new DriverChain();
+        $driver->addDriver(new TestDriverFirst(), 'FSi\Component\Metadata\Tests\Fixtures');
+        $driver->addDriver(new TestDriverSecond(), 'FSi\Component\Metadata\Tests\Fixtures');
 
         $metadata = $this->getMock('FSi\Component\Metadata\ClassMetadata',
             array('addPropertyMetadata'), array('class' =>self::ENTITYCLASS)
         );
 
-        $metadata->expects($this->exactly(2))
-                    ->method('addPropertyMetadata');
+        $metadata
+            ->expects($this->exactly(2))
+            ->method('addPropertyMetadata');
 
         $driver->loadClassMetadata($metadata);
     }

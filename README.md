@@ -33,83 +33,87 @@ Example of reading annotations from php class files.
 
 **Annotation driver** 
 
-    namespace FSi\Bundle\SiteBundle\Metadata\Driver;
-    
-    use FSi\Component\Metadata\ClassMetadataInterface;
-    use FSi\Component\Metadata\Driver\AbstractAnnotationDriver;
-    
-    class AnnotationDriver extends AbstractAnnotationDriver
-    {
-        public function loadClassMetadata(ClassMetadataInterface $metadata)
-        {
-            $classReflection  = $metadata->getClassReflection();
-            $className        = $classReflection->getName();
+```php
+namespace FSi\Bundle\SiteBundle\Metadata\Driver;
 
-            $classReflectionProperties = $classReflection->getProperties();
-            foreach ($classReflectionProperties as $property) {
-                if ($property->getDeclaringClass()->getName() == $className) {
-                    foreach ($this->reader->getPropertyAnnotations($property) as $element) {
-                        $metadata->addPropertyMetadata($property->name, $element->name, $element->value);
-                    }
+use FSi\Component\Metadata\ClassMetadataInterface;
+use FSi\Component\Metadata\Driver\AbstractAnnotationDriver;
+
+class AnnotationDriver extends AbstractAnnotationDriver
+{
+    public function loadClassMetadata(ClassMetadataInterface $metadata)
+    {
+        $classReflection  = $metadata->getClassReflection();
+        $className        = $classReflection->getName();
+
+        $classReflectionProperties = $classReflection->getProperties();
+        foreach ($classReflectionProperties as $property) {
+            if ($property->getDeclaringClass()->getName() == $className) {
+                foreach ($this->getAnnotationReader()->getPropertyAnnotations($property) as $element) {
+                    $metadata->addPropertyMetadata($property->name, $element->name, $element->value);
                 }
             }
         }
     }
+}
+```
     
 **Annotation declaration**
 
-    namespace FSi\Bundle\SiteBundle\Metadata\Mapping\Annotation;
-    
-    use Doctrine\Common\Annotations\Annotation;
-    
-    /** @Annotation */
-    final class Field extends Annotation {
-        public $name;
-        public $value;
-    }
+```php
+namespace FSi\Bundle\SiteBundle\Metadata\Mapping\Annotation;
+
+use Doctrine\Common\Annotations\Annotation;
+
+/** @Annotation */
+final class Field extends Annotation {
+    public $name;
+    public $value;
+}
+```
 
 **Example action in symfony 2 controller**
 
+```php
     public function metadataAction()
     {
-        $driver = new DriverChain(array(
-            new \FSi\Bundle\SiteBundle\Metadata\Driver\AnnotationDriver($this->get('annotation_reader'))
-        ));
+        $driver = new \FSi\Bundle\SiteBundle\Metadata\Driver\AnnotationDriver($this->get('annotation_reader'));
         
         $factory = new MetadataFactory($driver);
         
         $metdata = $factory->getClassMetadata('FSi\Bundle\SiteBundle\Entity\MetaTest');
     }
-    
+```
+
 **Example action in symfony 2 controller (with cache)**
 
-All you need to do to implement caching metadata is create the cache object from ``FSi\Component\Cache`` and pass it
-into metadata factory constructor. 
-For development purposes we suggest to use ArrayCache instead of not using any cache. 
+All you need to do to implement caching metadata is create the cache object from ``Doctrine\Common\Cache`` and pass it
+into ``MetadataFactory`` constructor. For development purposes we suggest to use ``ArrayCache`` instead of not using any cache.
 
+```php
+public function metadataAction()
+{
+    $cache = new Doctrine\Common\Cache\ApcCache(); 
+    
+    $driver = new \FSi\Bundle\SiteBundle\Metadata\Driver\AnnotationDriver($this->get('annotation_reader'));
+    
+    // the third parameter should be used when one cache instance will be used in many metadata factories. 
+    $factory = new MetadataFactory($driver, $cache, 'cache-prefix');
+    
+    $metdata = $factory->getClassMetadata('FSi\Bundle\SiteBundle\Entity\MetaTest');
+}
+```
 
-    public function metadataAction()
-    {
-        $cache = new FSi\Component\Cache\ApcCache(); 
-        
-        $driver = new DriverChain(array(
-            new \FSi\Bundle\SiteBundle\Metadata\Driver\AnnotationDriver($this->get('annotation_reader'))
-        ));
-        
-        // the third parameter should be used when one cache instance will be used in many metadata factories. 
-        $factory = new MetadataFactory($driver, $cache, 'cache-namespace');
-        
-        $metdata = $factory->getClassMetadata('FSi\Bundle\SiteBundle\Entity\MetaTest');
-    }
-
-Sometimes default ClassMetadata is not enough. You can create own class that implements 
-ClassMetadataInterface and pass class name into MetadataFactory constructor as third parameter. 
+Sometimes default ``ClassMetadata`` is not enough. You can create own class that implements 
+``ClassMetadataInterface`` and pass class name into ``MetadataFactory`` constructor as third parameter. 
 
 **Factory constructor example with custom metadata class**
 
-    $factory = new MetadataFactory($driver, $cache, 'cache-namespace', 'FSi\SiteBundle\Metadata\MyClassMetadata');
+```php
+$factory = new MetadataFactory($driver, $cache, 'cache-namespace', 'FSi\SiteBundle\Metadata\MyClassMetadata');
+```
 
 If you want to use Metadata Component in two separate mechanisms, inside of the 
-same application you should create new MetatadaFactory and MetadataDriver in each 
-mechanism but cache driver may be the same object each time. It is possible because 
-cache mechanism is used with different namespace for each factory object.  
+same application you should create new ``MetatadaFactory`` and appropriate driver in each 
+mechanism but cache driver may be the same object each time. It is possible when 
+cache mechanism is used with different prefix and/or metadata class for each factory object.
