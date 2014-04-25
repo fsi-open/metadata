@@ -72,22 +72,22 @@ class MetadataFactoryTest extends \PHPUnit_Framework_TestCase
                 ->method('fetch')
                 ->will($this->returnValue(false));
 
-        $cache->expects($this->at(2))
+        $cache->expects($this->at(1))
                 ->method('save')
                 ->with(
                     $this->logicalAnd(
                         $this->stringContains('cache1'),
-                        $this->stringContains(self::ENTITYCLASS)),
+                        $this->stringContains(self::ENTITYCHILDCLASS)),
                     $this->isInstanceOf('FSi\Component\Metadata\ClassMetadata'),
                     0
                 );
 
-        $cache->expects($this->at(6))
+        $cache->expects($this->at(3))
                 ->method('save')
                 ->with(
                     $this->logicalAnd(
                         $this->stringContains('cache2'),
-                        $this->stringContains(self::ENTITYCLASS)),
+                        $this->stringContains(self::ENTITYCHILDCLASS)),
                     $this->isInstanceOf('FSi\Component\Metadata\ClassMetadata'),
                     0
                 );
