@@ -97,23 +97,25 @@ class MetadataFactory
 
         if (isset($this->cache)) {
             if (false !== ($metadata = $this->cache->fetch($metadataIndex))) {
-                $this->loadedMetadata[$metadataIndex] = $metadata;
                 return $metadata;
             }
         }
 
         $metadata = new $this->metadataClassName($class);
 
-        if ($parent = $metadata->getClassReflection()->getParentClass()) {
-            $metadata = $this->getClassMetadata($parent->name);
-            $metadata->setClassName($class);
+        $parentClasses = array_reverse(class_parents($class));
+        foreach ($parentClasses as $parentClass) {
+            $metadata->setClassName($parentClass);
+            $this->driver->loadClassMetadata($metadata);
         }
 
+        $metadata->setClassName($class);
         $this->driver->loadClassMetadata($metadata);
 
         if (isset($this->cache)) {
             $this->cache->save($metadataIndex, $metadata);
         }
+        $this->loadedMetadata[$metadataIndex] = $metadata;
 
         return $metadata;
     }
