@@ -76,7 +76,7 @@ class MetadataFactory
             }
             $this->metadataClassName = $metadataClassName;
         } else {
-            $this->metadataClassName = self::METADATA_CLASS;
+            $this->metadataClassName = static::METADATA_CLASS;
         }
     }
 
@@ -101,7 +101,13 @@ class MetadataFactory
             }
         }
 
-        $metadata = new $this->metadataClassName($class);
+        $metadata = $this->createMetadataClass($class);
+
+        $classInterfaces = array_reverse(class_implements($class));
+        foreach ($classInterfaces as $classInterface) {
+            $metadata->setClassName($classInterface);
+            $this->driver->loadClassMetadata($classInterface);
+        }
 
         $parentClasses = array_reverse(class_parents($class));
         foreach ($parentClasses as $parentClass) {
@@ -118,6 +124,18 @@ class MetadataFactory
         $this->loadedMetadata[$metadataIndex] = $metadata;
 
         return $metadata;
+    }
+
+    /**
+     * Creates a metadata class
+     *
+     * @param string $class
+     *
+     * @return ClassMetadataInterface
+     */
+    protected function createMetadataClass($class)
+    {
+        return new $this->metadataClassName($class);
     }
 
     /**
