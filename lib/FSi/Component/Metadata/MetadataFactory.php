@@ -16,10 +16,6 @@ class MetadataFactory
 {
     const METADATA_CLASS = 'FSi\Component\Metadata\ClassMetadata';
 
-    const LOAD_INTERFACES_METADATA = true;
-    const LOAD_PARENTS_METADATA = true;
-    const LOAD_USES_METADATA = true;
-
     /**
      * Driver used to read metadata.
      *
@@ -105,30 +101,18 @@ class MetadataFactory
             }
         }
 
-        $metadata = new $this->metadataClassName($class);
+        $metadata = $this->createMetadataClass($class);
 
-        if(static::LOAD_INTERFACES_METADATA) {
-            $classInterfaces = array_reverse(class_implements($class));
-            foreach ($classInterfaces as $classInterface) {
-                $metadata->setClassName($classInterface);
-                $this->driver->loadClassMetadata($classInterface);
-            }
+        $classInterfaces = array_reverse(class_implements($class));
+        foreach ($classInterfaces as $classInterface) {
+            $metadata->setClassName($classInterface);
+            $this->driver->loadClassMetadata($classInterface);
         }
 
-        if(static::LOAD_PARENTS_METADATA) {
-            $parentClasses = array_reverse(class_parents($class));
-            foreach ($parentClasses as $parentClass) {
-                $metadata->setClassName($parentClass);
-                $this->driver->loadClassMetadata($metadata);
-            }
-        }
-
-        if(static::LOAD_USES_METADATA && PHP_VERSION_ID >= 50400 ) {
-            $classUses = array_reverse(class_uses($class));
-            foreach ($classUses as $classUse) {
-                $metadata->setClassName($classUse);
-                $this->driver->loadClassMetadata($metadata);
-            }
+        $parentClasses = array_reverse(class_parents($class));
+        foreach ($parentClasses as $parentClass) {
+            $metadata->setClassName($parentClass);
+            $this->driver->loadClassMetadata($metadata);
         }
 
         $metadata->setClassName($class);
@@ -140,6 +124,18 @@ class MetadataFactory
         $this->loadedMetadata[$metadataIndex] = $metadata;
 
         return $metadata;
+    }
+
+    /**
+     * Creates a metadata class
+     *
+     * @param string $class
+     *
+     * @return ClassMetadataInterface
+     */
+    protected function createMetadataClass($class)
+    {
+        return new $this->metadataClassName($class);
     }
 
     /**
